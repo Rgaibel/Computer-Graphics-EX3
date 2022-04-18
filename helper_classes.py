@@ -10,8 +10,12 @@ def normalize(vector):
 # This function gets a vector and the normal of the surface it hit
 # This function returns the vector that reflects from the surface
 def reflected(vector, normal):
-    v = np.array([0,0,0])
-    return v
+    # angle = np.arccos(np.divide(np.dot(vector, normal), normalize(vector), normalize(normal)))
+    U = normalize(vector)
+    N = normalize(normal)
+    R = np.subtract(U, 2 * np.transpose(N) * np.dot(U, N))
+
+    return R
 
 ## Lights
 
