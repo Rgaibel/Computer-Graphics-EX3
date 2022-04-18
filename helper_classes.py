@@ -10,8 +10,13 @@ def normalize(vector):
 # This function gets a vector and the normal of the surface it hit
 # This function returns the vector that reflects from the surface
 def reflected(vector, normal):
-    v = np.array([0,0,0])
-    return v
+    """
+    :param vector: a vector (np.array)
+    :param normal: the normal of the surface the input vector hit
+    :return: the vector that reflects from the surface
+    """
+    reflected_vector = vector - (2 * (vector.dot(normal) * normal))
+    return reflected_vector
 
 ## Lights
 
