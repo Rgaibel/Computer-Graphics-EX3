@@ -38,7 +38,7 @@ class DirectionalLight(LightSource):
     def get_light_ray(self,intersection_point):
         light_to_intersection_vector = intersection_point - LightSource
         direction = normalize(light_to_intersection_vector)
-        t_param = 1
+        t_param = 1 # '1' is a placeholder. Is t_param the distance? How can we know the distance here?
         light_to_intersection_ray = LightSource + direction * t_param
         return light_to_intersection_ray
 
@@ -161,9 +161,17 @@ class Sphere(Object3D):
         self.center = center
         self.radius = radius
 
+    # Added by Mor
     def intersect(self, ray: Ray):
-        #TODO
-        pass
+        b = 2 * np.dot(ray_direction, ray_origin - center)
+        c = np.linalg.norm(ray_origin - center) ** 2 - radius ** 2
+        d = b ** 2 - 4 * c
+        if d > 0:
+            t1 = (-b + np.sqrt(d)) / 2
+            t2 = (-b - np.sqrt(d)) / 2
+            if t1 > 0 and t2 > 0:
+                return min(t1, t2)
+        return None
 
 
 class Mesh(Object3D):
