@@ -36,11 +36,12 @@ class DirectionalLight(LightSource):
     # This function returns the ray that goes from the light source to a point
     # Mor added (not sure what value t_param should be)
     def get_light_ray(self,intersection_point):
-        light_to_intersection_vector = intersection_point - LightSource
-        direction = normalize(light_to_intersection_vector)
-        t_param = 1 # '1' is a placeholder. Is t_param the distance? How can we know the distance here?
-        light_to_intersection_ray = LightSource + direction * t_param
-        return light_to_intersection_ray
+        # light_to_intersection_vector = intersection_point - LightSource
+        # direction = normalize(light_to_intersection_vector)
+        # t_param = 1 # '1' is a placeholder. Is t_param the distance? How can we know the distance here?
+        # light_to_intersection_ray = LightSource + direction * t_param
+        # return light_to_intersection_ray
+        return Ray()
 
     # This function returns the distance from a point to the light source
     def get_distance_from_light(self, intersection):
@@ -105,9 +106,13 @@ class Ray:
     # The function is getting the collection of objects in the scene and looks for the one with minimum distance.
     # The function should return the nearest object and its distance (in two different arguments)
     def nearest_intersected_object(self, objects):
+        distances = [object.intersect(self) for object in objects]
         nearest_object = None
         min_distance = np.inf
-        #TODO
+        for i, distance in enumerate(distances):
+            if distance and distance < min_distance:
+                min_distance = distance
+                nearest_object = objects[i]
         return nearest_object, min_distance
 
 
