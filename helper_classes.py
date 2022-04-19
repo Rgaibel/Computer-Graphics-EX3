@@ -15,7 +15,7 @@ def reflected(vector, normal):
     :param normal: the normal of the surface the input vector hit
     :return: the vector that reflects from the surface
     """
-    reflected_vector = vector - (2 * (vector.dot(normal) * normal))
+    reflected_vector = vector - (2 * (np.dot(vector, normal) * normal))
     return reflected_vector
 
 ## Lights
@@ -34,9 +34,13 @@ class DirectionalLight(LightSource):
         # TODO
 
     # This function returns the ray that goes from the light source to a point
+    # Mor added (not sure what value t_param should be)
     def get_light_ray(self,intersection_point):
-        # TODO
-        return Ray()
+        light_to_intersection_vector = intersection_point - LightSource
+        direction = normalize(light_to_intersection_vector)
+        t_param = 1
+        light_to_intersection_ray = LightSource + direction * t_param
+        return light_to_intersection_ray
 
     # This function returns the distance from a point to the light source
     def get_distance_from_light(self, intersection):
