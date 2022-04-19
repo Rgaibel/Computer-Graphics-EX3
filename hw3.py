@@ -12,7 +12,7 @@ def render_scene(camera, ambient, lights, objects, screen_size, max_depth):
         for j, x in enumerate(np.linspace(screen[0], screen[2], width)):
             pixel = np.array([x, y, 0])
             color = np.zeros(3)
-
+            direction = normalize(pixel - camera) # Mor added
             # This is the main loop where each pixel color is computed.
             # TODO
 
