@@ -13,7 +13,7 @@ def reflected(vector, normal):
     # angle = np.arccos(np.divide(np.dot(vector, normal), normalize(vector), normalize(normal)))
     U = normalize(vector)
     N = normalize(normal)
-    R = np.subtract(U, 2 * np.transpose(N) * np.dot(U, N))
+    R = np.subtract(U, np.multiply(2, np.transpose(N), np.dot(U, N)))
 
     return R
 
@@ -28,24 +28,21 @@ class LightSource:
 
 class DirectionalLight(LightSource):
 
-    def __init__(self, intensity):
+    def __init__(self, intensity, direction):
         super().__init__(intensity)
-        # TODO
+        self.direction = np.array(direction)
 
     # This function returns the ray that goes from the light source to a point
-    def get_light_ray(self,intersection_point):
-        # TODO
-        return Ray()
+    def get_light_ray(self, intersection_point):
+        return Ray(intersection_point, self.direction)
 
     # This function returns the distance from a point to the light source
     def get_distance_from_light(self, intersection):
-        #TODO
-        pass
+        return np.inf
 
     # This function returns the light intensity at a point
     def get_intensity(self, intersection):
-        #TODO
-        pass
+        return self.intensity
 
 
 class PointLight(LightSource):
@@ -58,11 +55,11 @@ class PointLight(LightSource):
         self.kq = kq
 
     # This function returns the ray that goes from the light source to a point
-    def get_light_ray(self,intersection):
-        return Ray(intersection,normalize(self.position - intersection))
+    def get_light_ray(self, intersection):
+        return Ray(intersection, normalize(self.position - intersection))
 
     # This function returns the distance from a point to the light source
-    def get_distance_from_light(self,intersection):
+    def get_distance_from_light(self, intersection):
         return np.linalg.norm(intersection - self.position)
 
     # This function returns the light intensity at a point
@@ -73,23 +70,26 @@ class PointLight(LightSource):
 
 class SpotLight(LightSource):
 
-
-    def __init__(self, intensity):
+    def __init__(self, intensity, position, direction, kc, kl, kq):
         super().__init__(intensity)
-        # TODO
+        self.position = np.array(position)
+        self.direction = np.array(direction)
+        self.kc = kc
+        self.kl = kl
+        self.kq = kq
 
     # This function returns the ray that goes from the light source to a point
-    def get_light_ray(self,intersection):
-        # TODO
-        return Ray()
+    def get_light_ray(self, intersection):
+        return Ray(intersection, normalize(self.position - intersection))
 
-    def get_distance_from_light(self,intersection):
-        #TODO
-        pass
+    def get_distance_from_light(self, intersection):
+        return np.linalg.norm(intersection - self.position)
 
+        # This function returns the light intensity at a point
     def get_intensity(self, intersection):
-        #TODO
-        pass
+        cosAngle = np.dot(normalize(np.negative(self.get_light_ray(intersection))), normalize(self.direction))
+        d = self.get_distance_from_light(intersection)
+        return (self.intensity * cosAngle) / (self.kc + self.kl * d + self.kq * (d ** 2))
 
 
 class Ray:
