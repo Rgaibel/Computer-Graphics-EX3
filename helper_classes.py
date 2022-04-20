@@ -100,9 +100,13 @@ class Ray:
     # The function is getting the collection of objects in the scene and looks for the one with minimum distance.
     # The function should return the nearest object and its distance (in two different arguments)
     def nearest_intersected_object(self, objects):
+        object_distances = [object.intersect(self) for object in objects]
         nearest_object = None
         min_distance = np.inf
-        #TODO
+        for i, distance in enumerate(object_distances):
+            if distance and distance < min_distance:
+                min_distance = distance
+                nearest_object = objects[i]
         return nearest_object, min_distance
 
 
@@ -157,8 +161,16 @@ class Sphere(Object3D):
         self.radius = radius
 
     def intersect(self, ray: Ray):
-        #TODO
-        pass
+        b = 2 * np.dot(ray.direction, ray.origin - self.center)
+        c = np.linalg.norm(ray.origin - self.center) * 2 - self.radius * 2
+        d = b ** 2 - 4*c
+        if d > 0:
+            t1 = (-b + np.sqrt(d)) / 2
+            t2 = (-b - np.sqrt(d)) / 2
+            if t1 > 0 and t2 > 0:
+                return min(t1, t2)
+        return None
+
 
 
 class Mesh(Object3D):
