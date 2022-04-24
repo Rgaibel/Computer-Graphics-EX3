@@ -13,7 +13,7 @@ def reflected(vector, normal):
     # angle = np.arccos(np.divide(np.dot(vector, normal), normalize(vector), normalize(normal)))
     U = normalize(vector)
     N = normalize(normal)
-    R = np.subtract(U, np.multiply(2, np.transpose(N), np.dot(U, N)))
+    R = np.subtract(U, np.multiply(2, np.dot(U, N), N))
 
     return R
 
@@ -104,9 +104,11 @@ class Ray:
         nearest_object = None
         min_distance = np.inf
         for i, distance in enumerate(object_distances):
-            if distance and distance < min_distance:
-                min_distance = distance
+            # print(distance)
+            if (distance) and (distance[0] < min_distance):
+                min_distance = distance[0]
                 nearest_object = objects[i]
+
         return nearest_object, min_distance
 
 
@@ -133,6 +135,9 @@ class Plane(Object3D):
         else:
             return None
 
+    def compute_normal(self, intersection):
+        return self.normal
+#     pretty sure that I should change this to start from the point of intersection...should it be a ray?
 
 
 class Triangle(Object3D):
@@ -143,7 +148,7 @@ class Triangle(Object3D):
         self.c = np.array(c)
         self.normal = self.compute_normal()
 
-    def compute_normal(self):
+    def compute_normal(self, intersection):
         # TODO
         n = np.array()
         return n
@@ -171,6 +176,11 @@ class Sphere(Object3D):
                 return min(t1, t2)
         return None
 
+    def compute_normal(self, intersection):
+        return normalize(intersection - self.center)
+
+
+
 
 
 class Mesh(Object3D):
@@ -195,3 +205,11 @@ class Mesh(Object3D):
     def intersect(self, ray: Ray):
         #TODO
         pass
+
+    def compute_normal(self, intersection):
+        #TODO
+        pass
+#
+# def constructRayThroughPixel(camera, pixel):
+#     v_towards = normalize(pixel - camera)  # Mor added
+#     p1 = camera + f*v_towards
