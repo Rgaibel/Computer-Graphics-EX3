@@ -154,7 +154,7 @@ class Triangle(Object3D):
         self.ac = self.c - self.a
         self.bc = self.c - self.b
         self.ca = self.a - self.c
-        self.normal = self.compute_normal(1)
+        self.normal = self.compute_normal(None)
         self.plane = Plane(self.normal, a)
 
     def compute_normal(self, intersection):
@@ -233,7 +233,40 @@ class Mesh(Object3D):
     def compute_normal(self, intersection):
         #TODO
         pass
-#
-# def constructRayThroughPixel(camera, pixel):
-#     v_towards = normalize(pixel - camera)  # Mor added
-#     p1 = camera + f*v_towards
+
+
+class Mesh(Object3D):
+    # Mesh are defined by a list of vertices, and a list of faces.
+    # The faces are triplets of vertices by their index number.
+    def __init__(self, v_list, f_list):
+        self.v_list = v_list
+        self.f_list = f_list
+        self.triangle_list = self.create_triangle_list()
+
+    def create_triangle_list(self):
+        triangle_list = []
+        for face in self.f_list:
+            triangle = Triangle(self.v_list[face[0]], self.v_list[face[1]], self.v_list[face[2]])
+            triangle_list.append(triangle)
+        return triangle_list
+
+    def apply_materials_to_triangles(self):
+        for t in self.triangle_list:
+            t.set_material(self.ambient, self.diffuse, self.specular, self.shininess, self.reflection)
+
+    # Hint: Intersect returns both distance and nearest object.
+    # Keep track of both.
+    def intersect(self, ray: Ray):
+        nearest_object = None
+        min_distance = np.inf
+        for i, triangle in enumerate(self.triangle_list):
+            t = triangle.intersect(ray)
+            if t and (t[0] < min_distance):
+                min_distance = t[0]
+                nearest_object = t[1]
+
+        return nearest_object, min_distance
+
+    def compute_normal(self, intersection):
+        intersect_triangle = self.intersect(Ray(1e-5*intersection, normalize(intersection-1e-5*intersection )))
+        return intersect_triangle[0].compute_normal(intersection)
