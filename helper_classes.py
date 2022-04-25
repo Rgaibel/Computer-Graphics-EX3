@@ -215,24 +215,6 @@ class Mesh(Object3D):
         self.f_list = f_list
         self.triangle_list = self.create_triangle_list()
 
-    def create_triangle_list(self):
-        l = []
-        # TODO
-        return l
-
-    def apply_materials_to_triangles(self):
-        for t in self.triangle_list:
-            t.set_material(self.ambient, self.diffuse, self.specular, self.shininess, self.reflection)
-
-    # Hint: Intersect returns both distance and nearest object.
-    # Keep track of both.
-    def intersect(self, ray: Ray):
-        #TODO
-        pass
-
-    def compute_normal(self, intersection):
-        #TODO
-        pass
 
 
 class Mesh(Object3D):
@@ -265,8 +247,8 @@ class Mesh(Object3D):
                 min_distance = t[0]
                 nearest_object = t[1]
 
-        return nearest_object, min_distance
+        return min_distance, nearest_object
 
     def compute_normal(self, intersection):
         intersect_triangle = self.intersect(Ray(1e-5*intersection, normalize(intersection-1e-5*intersection )))
-        return intersect_triangle[0].compute_normal(intersection)
+        return intersect_triangle[1].compute_normal(intersection)
