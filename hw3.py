@@ -12,10 +12,11 @@ def render_scene(camera, ambient, lights, objects, screen_size, max_depth):
         for j, x in enumerate(np.linspace(screen[0], screen[2], width)):
             pixel = np.array([x, y, 0])
             color = np.zeros(3)
-            direction_vector = normalize(pixel - camera)
-            ray = Ray(camera, direction_vector)
 
             for light in lights:
+
+                direction_vector = normalize(pixel - camera)
+                ray = Ray(camera, direction_vector)
                 reflection = 1
 
                 for k in range(max_depth):
