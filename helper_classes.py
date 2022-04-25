@@ -142,7 +142,6 @@ class Plane(Object3D):
 
     def compute_normal(self, intersection):
         return self.normal
-#     pretty sure that I should change this to start from the point of intersection...should it be a ray?
 
 
 class Triangle(Object3D):
@@ -151,18 +150,38 @@ class Triangle(Object3D):
         self.a = np.array(a)
         self.b = np.array(b)
         self.c = np.array(c)
-        self.normal = self.compute_normal()
+        self.ab = self.b - self.a
+        self.ac = self.c - self.a
+        self.bc = self.c - self.b
+        self.ca = self.a - self.c
+        self.normal = self.compute_normal(1)
+        self.plane = Plane(self.normal, a)
 
     def compute_normal(self, intersection):
-        # TODO
-        n = np.array()
+        n = np.cross(self.ab, self.ac)
         return n
 
     # Hint: First find the intersection on the plane
     # Later, find if the point is in the triangle using barycentric coordinates
     def intersect(self, ray: Ray):
-        #TODO
-        pass
+        plane_intersect = self.plane.intersect(ray)
+        if not plane_intersect:
+            return None
+
+        distance = plane_intersect[0]
+        ray_plane_intersect = ray.origin + ray.direction * distance # (- .00005)?
+        ia = ray_plane_intersect - self.a
+        ib = ray_plane_intersect - self.b
+        ic = ray_plane_intersect - self.c
+
+        x = np.cross(self.ab, ia)
+        y = np.cross(self.bc, ib)
+        z = np.cross(self.ca, ic)
+
+        if np.dot(x, self.normal) > 0 and np.dot(y, self.normal) > 0 and np.dot(z, self.normal) > 0:
+            return distance, self
+        else:
+            return None
 
 
 class Sphere(Object3D):

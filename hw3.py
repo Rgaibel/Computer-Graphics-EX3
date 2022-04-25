@@ -32,7 +32,7 @@ def render_scene(camera, ambient, lights, objects, screen_size, max_depth):
                     intersection_to_light_direction_vector = light.get_light_ray(intersection_point).direction
 
                     _, min_distance = Ray(shifted_point, intersection_to_light_direction_vector).nearest_intersected_object(objects)
-                    intersection_to_light_distance = np.linalg.norm(light.position - intersection_point)
+                    intersection_to_light_distance = light.get_distance_from_light(intersection_point)
                     is_shadowed = min_distance < intersection_to_light_distance
 
                     if is_shadowed:
