@@ -17,16 +17,15 @@ def render_scene(camera, ambient, lights, objects, screen_size, max_depth):
 
             for light in lights:
                 reflection = 1
-                intersection_point = ray.origin
 
                 for k in range(max_depth):
-                    # check for intersections
 
+                    # check for intersections
                     nearest_object, min_distance = ray.nearest_intersected_object(objects)
                     if nearest_object is None:
                         break
 
-                    intersection_point = intersection_point + min_distance * direction_vector
+                    intersection_point = ray.origin + min_distance * ray.direction
                     normal_to_object = nearest_object.compute_normal(intersection_point)
                     shifted_point = intersection_point + 1e-5 * normal_to_object
                     light_intensity = light.get_intensity(intersection_point)
@@ -57,7 +56,7 @@ def render_scene(camera, ambient, lights, objects, screen_size, max_depth):
                     color += reflection * phong_reflectance_model_equation
                     reflection *= nearest_object.reflection
 
-                    ray = Ray(shifted_point, reflected(direction_vector, normal_to_object))
+                    ray = Ray(shifted_point, reflected(ray.direction, normal_to_object))
             # We clip the values between 0 and 1 so all pixel values will make sense.
             image[i, j] = np.clip(color, 0, 1)
 

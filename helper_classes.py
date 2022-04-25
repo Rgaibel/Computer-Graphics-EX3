@@ -172,7 +172,7 @@ class Sphere(Object3D):
 
     def intersect(self, ray: Ray):
         b = 2 * np.dot(ray.direction, ray.origin - self.center)
-        c = np.linalg.norm(ray.origin - self.center) * 2 - self.radius * 2
+        c = np.linalg.norm(ray.origin - self.center) ** 2 - self.radius ** 2
         delta = b ** 2 - 4*c
         if delta > 0:
             t1 = (-b + np.sqrt(delta)) / 2
