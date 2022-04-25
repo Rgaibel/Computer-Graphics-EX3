@@ -6,18 +6,23 @@ def normalize(vector):
     return vector / np.linalg.norm(vector)
 
 
-# TODO:
 # This function gets a vector and the normal of the surface it hit
 # This function returns the vector that reflects from the surface
+# lecture 5.10
 def reflected(vector, normal):
-    # angle = np.arccos(np.divide(np.dot(vector, normal), normalize(vector), normalize(normal)))
-    U = normalize(vector)
-    N = normalize(normal)
-    R = np.subtract(U, np.multiply(2, np.dot(U, N), N))
+    v = vector - 2 * np.dot(vector, normal) * normal
+    return normalize(v)
 
-    return R
 
-## Lights
+def refracted(vector, normal, theta2):
+    theta1 = np.arccos(np.dot(normal, normalize(vector)))
+    n1 = np.sin(theta1)
+    n2 = np.sin(theta2)
+    medium_division = n1/n2
+    return np.dot(medium_division*np.cos(theta1)-np.cos(theta2), normal) + medium_division*vector
+
+
+# Lights
 
 
 class LightSource:
@@ -80,14 +85,14 @@ class SpotLight(LightSource):
 
     # This function returns the ray that goes from the light source to a point
     def get_light_ray(self, intersection):
-        return Ray(intersection, normalize(self.position - intersection))
+        return Ray(intersection, normalize(self.direction))
 
     def get_distance_from_light(self, intersection):
         return np.linalg.norm(intersection - self.position)
 
         # This function returns the light intensity at a point
     def get_intensity(self, intersection):
-        cosAngle = np.dot(normalize(np.negative(self.get_light_ray(intersection))), normalize(self.direction))
+        cosAngle = np.dot(normalize(intersection - self.position), normalize(self.direction))
         d = self.get_distance_from_light(intersection)
         return (self.intensity * cosAngle) / (self.kc + self.kl * d + self.kq * (d ** 2))
 
@@ -198,7 +203,7 @@ class Mesh(Object3D):
 
     def apply_materials_to_triangles(self):
         for t in self.triangle_list:
-            t.set_material(self.ambient,self.diffuse,self.specular,self.shininess,self.reflection)
+            t.set_material(self.ambient, self.diffuse, self.specular, self.shininess, self.reflection)
 
     # Hint: Intersect returns both distance and nearest object.
     # Keep track of both.
